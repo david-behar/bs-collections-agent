@@ -14,8 +14,14 @@ const basePath = process.env[`DKU_CODE_STUDIO_BROWSER_PATH_${clientPort}`]
 // https://vitejs.dev/config/
 export default defineConfig({
   server: {
-    host: "127.0.0.1",
     port: Number(clientPort),
+    host: "127.0.0.1",
+    proxy: {
+      "/api": {
+        target: "http://127.0.0.1:5000",
+        secure: false,
+      }
+    }
   },
   plugins: [
     vue(),
