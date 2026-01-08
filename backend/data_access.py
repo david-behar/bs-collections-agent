@@ -107,7 +107,7 @@ def get_case_payload(case_id: str) -> Dict[str, Any]:
                     "type": doc_type,
                     "label": label,
                     "filename": os.path.basename(rel_path),
-                    "download_url": f"api/cases/{case_id}/attachments/{doc_type}",
+                    "download_url": f"/api/cases/{case_id}/attachments/{doc_type}",
                 }
             )
 
