@@ -19,9 +19,25 @@ const toastTimer = ref<ReturnType<typeof setTimeout> | null>(null)
 
 const activeCase = computed(() => cases.value.find((item) => item.case_id === activeCaseId.value) ?? null)
 const attachments = computed(() => caseDetail.value?.attachments ?? [])
-const activeAttachment = computed(() =>
-  attachments.value.find((file) => file.type === activeAttachmentId.value) ?? null
-)
+const activeAttachment = computed(() => {
+  const file = attachments.value.find((file) => file.type === activeAttachmentId.value)
+  if (!file) return null
+  
+  // Prepend Dataiku backend URL if available
+  let fullUrl = file.download_url
+  try {
+    // @ts-ignore
+    if (window.dataiku?.getWebAppBackendUrl) {
+      // @ts-ignore
+      const backendUrl = window.dataiku.getWebAppBackendUrl('')
+      fullUrl = backendUrl + file.download_url
+    }
+  } catch (e) {
+    // In local dev, just use the original URL
+  }
+  
+  return { ...file, download_url: fullUrl }
+})
 
 const communicationParagraphs = computed(() => {
   const raw = caseDetail.value?.email_body ?? ''
