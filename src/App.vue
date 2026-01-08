@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { API, type CaseDetail, type CaseSummary } from './Api'
+import { baseURL } from './api/index'
 
 const cases = ref<CaseSummary[]>([])
 const casesLoading = ref(true)
@@ -19,9 +20,17 @@ const toastTimer = ref<ReturnType<typeof setTimeout> | null>(null)
 
 const activeCase = computed(() => cases.value.find((item) => item.case_id === activeCaseId.value) ?? null)
 const attachments = computed(() => caseDetail.value?.attachments ?? [])
-const activeAttachment = computed(() =>
-  attachments.value.find((file) => file.type === activeAttachmentId.value) ?? null
-)
+const activeAttachment = computed(() => {
+  const found = attachments.value.find((file) => file.type === activeAttachmentId.value)
+  if (!found) return null
+  // Ensure download_url includes the base URL for Dataiku embedding
+  return {
+    ...found,
+    download_url: found.download_url.startsWith('http') 
+      ? found.download_url 
+      : `${baseURL}/${found.download_url}`.replace(/\/+/g, '/')
+  }
+})
 
 const communicationParagraphs = computed(() => {
   const raw = caseDetail.value?.email_body ?? ''
