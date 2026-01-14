@@ -11,11 +11,15 @@ function getBackendProdUrl() {
     return null
 }
 
+const baseURLClientVite = import.meta.env.VITE_BASE_URL;
 let baseURLVite = import.meta.env.BASE_URL;
+console.log(baseURLClientVite);
 
 const backendProdBase = getBackendProdUrl();
 const localBackendPort =  import.meta.env.VITE_API_PORT;
 const localClientPort = import.meta.env.VITE_CLIENT_PORT;
+console.log(localBackendPort);
+console.log(localClientPort);
 
 baseURLVite = baseURLVite.replace(localClientPort, localBackendPort);
 
@@ -37,5 +41,5 @@ axios.interceptors.response.use(
   export const APIErrors: any[] = [];
   
   export default axios;
-  export { baseURL };
+  export { baseURL, baseURLClientVite };
 

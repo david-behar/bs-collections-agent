@@ -28,10 +28,13 @@ def download_attachment(case_id: str, doc_type: str):
         return jsonify({"detail": "Unsupported attachment type"}), 400
     except FileNotFoundError:
         return jsonify({"detail": "Attachment not found"}), 404
-
-    return send_file(
+    
+    response = send_file(
         buffer,
         mimetype="application/pdf",
         download_name=filename,
         as_attachment=False,
     )
+    response.headers["X-Frame-Options"] = "ALLOWALL"
+    response.headers.setdefault("Content-Security-Policy", "frame-ancestors *")
+    return response
