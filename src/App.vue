@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { API, type CaseDetail, type CaseSummary } from './Api'
-import { baseURLClientVite } from './api/index'
 
 const cases = ref<CaseSummary[]>([])
 const casesLoading = ref(true)
@@ -23,18 +22,6 @@ const attachments = computed(() => caseDetail.value?.attachments ?? [])
 const activeAttachment = computed(() =>
   attachments.value.find((file) => file.type === activeAttachmentId.value) ?? null
 )
-
-const toBackendUrl = (rawUrl: string | null | undefined) => {
-  if (!rawUrl) return ''
-  if (/^https?:\/\//i.test(rawUrl)) return rawUrl
-  const sanitizedBase = (baseURLClientVite || '').replace(/\/$/, '')
-  const normalizedPath = rawUrl.startsWith('/') ? rawUrl : `/${rawUrl}`
-  console.log('Constructed normalizedPath URL:', normalizedPath)
-  console.log('Constructed sanitizedBase URL:', sanitizedBase)
-  return sanitizedBase ? `${sanitizedBase}${normalizedPath}` : normalizedPath
-}
-
-const attachmentPreviewUrl = computed(() => toBackendUrl(activeAttachment.value?.download_url))
 
 const communicationParagraphs = computed(() => {
   const raw = caseDetail.value?.email_body ?? ''
@@ -316,8 +303,8 @@ const fallbackResponseHtml = '<p>AI response will appear here once it has been g
             <div class="preview-label">Preview</div>
             <h3>{{ activeAttachment.label }}</h3>
             <p>{{ activeAttachment.filename }}</p>
-            <iframe :src="attachmentPreviewUrl" title="PDF preview" frameborder="0"></iframe>
-            <a :href="attachmentPreviewUrl" target="_blank" rel="noopener" class="open-link">Open in new tab</a>
+            <iframe :src="activeAttachment.download_url" title="PDF preview" frameborder="0"></iframe>
+            <a :href="activeAttachment.download_url" target="_blank" rel="noopener" class="open-link">Open in new tab</a>
           </div>
         </div>
         <p v-else class="empty-copy">No attachments are stored for this case.</p>
