@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { API, type CaseDetail, type CaseSummary } from './Api'
+import { baseURL } from './api/index'
+
+console.log('[app] axios baseURL', baseURL)
 
 const cases = ref<CaseSummary[]>([])
 const casesLoading = ref(true)
@@ -48,13 +51,45 @@ const loadCases = async () => {
   }
 }
 
+const buildAttachmentUrl = (downloadUrl: string) => {
+  const rawValue = downloadUrl || ''
+  if (!rawValue) {
+    console.log('[attachments] missing download url; returning empty string')
+    return ''
+  }
+  if (/^https?:\/\//i.test(rawValue)) {
+    console.log('[attachments] download url already absolute', rawValue)
+    return rawValue
+  }
+  const normalizedBase = (baseURL || '').replace(/\/+$/, '')
+  const normalizedPath = rawValue.replace(/^\/+/, '')
+  const resolved = `${normalizedBase}/${normalizedPath}`
+  console.log('[attachments] resolved relative url', {
+    rawValue,
+    normalizedPath,
+    normalizedBase,
+    resolved,
+  })
+  return resolved
+}
+
 const loadCaseDetail = async (caseId: string) => {
   if (!caseId) return
   caseLoading.value = true
   errorMessage.value = ''
   try {
     const { data } = await API.getCase(caseId)
-    caseDetail.value = data
+    const attachmentsWithResolvedUrls = (data.attachments ?? []).map((file) => {
+      const resolvedUrl = buildAttachmentUrl(file.download_url)
+      console.log('[attachments] mapping attachment', {
+        caseId: data.case_id,
+        type: file.type,
+        original: file.download_url,
+        resolved: resolvedUrl,
+      })
+      return { ...file, download_url: resolvedUrl }
+    })
+    caseDetail.value = { ...data, attachments: attachmentsWithResolvedUrls }
     activeAttachmentId.value = data.attachments[0]?.type ?? null
     editedResponse.value = data.llm_output ?? ''
     isEditing.value = false
