@@ -35,6 +35,4 @@ def download_attachment(case_id: str, doc_type: str):
         download_name=filename,
         as_attachment=False,
     )
-    response.headers["X-Frame-Options"] = "ALLOWALL"
-    response.headers.setdefault("Content-Security-Policy", "frame-ancestors *")
     return response
