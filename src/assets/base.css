@@ -6,9 +6,10 @@
   --color-background-mute: #213257;
   --color-panel-elevated: rgba(33, 47, 80, 0.94);
   --color-border: rgba(255, 255, 255, 0.16);
-  --color-border-strong: rgba(255, 255, 255, 0.28);
+  --color-border-strong: rgba(244, 229, 205, 0.4);
   --color-text: #f7f9ff;
-  --color-text-muted: rgba(222, 230, 255, 0.78);
+  --color-text-muted: rgba(244, 229, 205, 0.82);
+  --color-text-strong: #ffd7a0;
   --color-accent: #64e9c8;
   --color-accent-secondary: #7ab1ff;
   --color-danger: #ff8b8b;
@@ -41,4 +42,9 @@ body {
 
 #app {
   background-image: var(--glass-gradient);
+}
+
+strong {
+  color: var(--color-text-strong);
+  font-weight: 600;
 }

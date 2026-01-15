@@ -327,6 +327,10 @@ const fallbackResponseHtml = '<p>AI response will appear here once it has been g
   padding: 40px 32px 64px;
 }
 
+.app-shell strong {
+  color: var(--color-text-strong);
+}
+
 .page-header {
   display: flex;
   justify-content: space-between;
@@ -468,9 +472,23 @@ const fallbackResponseHtml = '<p>AI response will appear here once it has been g
   border: 1px solid var(--color-border);
   border-radius: 16px;
   padding: 16px;
-  background: var(--color-background-mute);
   min-height: 200px;
   color: var(--color-text);
+}
+
+.email-body :deep(strong) {
+  color: var(--color-text-strong);
+  font-weight: 600;
+}
+
+.email-body :deep(.header) {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.email-body :deep(.evidence-box) {
+  background: transparent !important;
+  background-color: transparent !important;
 }
 
 .hint {
@@ -628,7 +646,7 @@ const fallbackResponseHtml = '<p>AI response will appear here once it has been g
 .open-link {
   text-align: right;
   font-weight: 600;
-  color: var(--color-accent-secondary);
+  color: var(--color-accent);
 }
 
 .state-card {
